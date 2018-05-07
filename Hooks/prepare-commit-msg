@@ -1,0 +1,41 @@
+#!/bin/bash
+# Author: Chris Reeber 
+echo "START PrepareCommitMessage Hook"
+
+NAME=$(git branch | grep '*' | sed 's/* //')
+COMMIT_EDITMSG=$1
+
+
+echo "$COMMIT_EDITMSG"
+
+MSG=`cat $COMMIT_EDITMSG`
+echo "    old commit message := "; 
+echo "$MSG";
+echo ""
+echo ""
+echo ""
+
+echo "    Checking for Ticket Name "
+
+TICKET=$(echo $MSG | grep  -Ei "\b${NAME}\b")
+
+if [ -n "$TICKET" ]
+then 
+	echo "    Ticket Name $NAME is in the commit message, no action necessary"; 
+else 
+     ## Uncomment below if you would rather it exit on missing Ticket Number 
+	# echo "    Ticket Name $NAME is NOT in the commit message.  you suck.  Please insert $Name into commit message"; 
+	# exit 1 
+	
+	## Prepend the Branch Name/Ticket Number to the commit message 
+	  echo "Ticket Name is not in Commit Message.... Adding it ";
+	  MSG="$NAME -- $MSG"; 
+	  echo "new message is :: "
+	  echo "$MSG" ;
+	  echo "$MSG" > $COMMIT_EDITMSG; 
+fi 
+
+echo ""
+echo "END PrepareCommitMessage Hook"
+echo ""
+exit 0

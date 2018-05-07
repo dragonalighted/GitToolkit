@@ -1,0 +1,65 @@
+
+Skip to end of metadata
+Created by Christopher Reeber, last modified on Apr 12, 2016 Go to start of metadata
+An alias is a user made git command.  The alias text gets replaced by the assigned text when running.  As an example from the table below:
+
+ec = config --global -e
+
+> git ec
+
+git ec will become git config --global -e 
+
+the aliases with !f()  { ... ;}; f are chaining bash commands together.   
+
+ 
+
+To begin, go to the git bash for your repository and type 
+
+git config --global alias.ec = 'config --global -e' 
+
+This will create the edit config alias.  You can continue to use this method to add other aliases, however,  If you call git ec you can directly edit the global config and add any aliases you choose.  You can rename these however you want.
+
+ 
+
+
+
+ec = config --global -e	Edit Config: Opens the global config in an editor.
+undo = reset --soft HEAD~1	
+Undo: If you mistake a commit AND HAVEN'T PUSHED, you can run this to 'undo' the commit and recommit.
+
+An example of this might be a bad commit message, or included a file you didn't mean to. You don't want
+
+to do this after you have pushed as this will muck with the history on the repository.
+
+clearwd = clean -d -x -f
+
+ 
+cob = checkout -b	
+Check out Branch: short hand for checking out a branch, follow with your new branch name. ex: git cob
+
+develop will checkout develop.
+
+ub = "!f() { NAME=$(git branch | grep '*' | sed 's/* //') && git checkout ${1-develop} && git pull origin ${1-develop} && git checkout $NAME && git pull origin ${1-develop} ; }; f"	
+Update Branch: This will checkout develop, pull develop into develop, checkout your previous branch
+
+and pull develop into that branch, and finish with you in that branch.
+
+ubb = "!f() { git checkout ${2-develop} && git pull origin ${2-develop} && git checkout $1 && git pull origin ${2-develop} ; }; f"	
+Update Branch*: Like Update Branch (ub) this will checkout and refresh develop, then checkout a branch name you supply
+
+and refresh that with develop. usage: git ubb 'APP-XXXX' this will refresh develop, checkout APP-XXXX and refresh that
+
+and leave you on that branch.
+
+nb = "!f() { NAME=$1 && git checkout ${2-develop} && git pull origin ${2-develop} && git checkout -b $NAME ; }; f"	New Branch: This works like Update Branch*, however the supplied branch must be a new branch.
+prep = "!f() { git checkout ${1-develop} && git pull origin ${1-develop} ; }; f"	Prep: This will checkout and refresh develop.
+prepbranch = "!f() { NAME=$1 && git nb $NAME; }; f"	 
+alias = config --get-regexp '^alias'	List Alias: This will list out the aliases you have in the command line.
+rstub = "!f() { git rm --cached -r . && git reset --hard ; }; f"	
+Reset Stubborn: This will delete your git cache and perform a hard reset, which means you will want to make sure
+
+your changes are committed! any uncommited work will be lost. Useful for when you get some random
+
+whitespace discrepancies. This is a fairly nuclear option.
+
+prune = remote prune origin	 
